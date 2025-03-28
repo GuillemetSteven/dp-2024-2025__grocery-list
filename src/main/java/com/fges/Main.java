@@ -7,6 +7,8 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -24,13 +26,21 @@ import java.io.Reader;
 
 public class Main {
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
 
     public static void main(String[] args) throws IOException {
         System.exit(exec(args));
     }
 
-    public static int exec(String[] args) throws IOException {
+    private static int calculateTotalForItem(List<GroceryItem> groceryList, String itemName) {
+        return groceryList.stream()
+                .filter(item -> item.getName().equalsIgnoreCase(itemName))
+                .mapToInt(GroceryItem::getQuantity)
+                .sum();
+    }
+
+    public static <groceryItem> int exec(String[] args) throws IOException {
         // Setup CLI interface
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
@@ -61,12 +71,13 @@ public class Main {
 
         String fileContent = "";
 
-        List<String> groceryList;
+        List<GroceryItem> groceryList;
 
         if (Files.exists(filePath)) {
             fileContent = Files.readString(filePath);
 
-            var parsedList = OBJECT_MAPPER.readValue(fileContent, new TypeReference<List<String>>() {
+            // Reading JSON
+            var parsedList = OBJECT_MAPPER.readValue(fileContent, new TypeReference<List<GroceryItem>>() {
             });
             // Cast the list as an ArrayList to ensure its mutability
             groceryList = new ArrayList<>(parsedList);
@@ -86,7 +97,7 @@ public class Main {
                 String itemName = positionalArgs.get(1);
                 int quantity = Integer.parseInt(positionalArgs.get(2));
 
-                groceryList.add(itemName + ": " + quantity);
+                groceryList.add(new GroceryItem(itemName, quantity));
 
                 var outputFile = new File(fileName);
 
@@ -94,8 +105,8 @@ public class Main {
                 return 0;
             }
             case "list" -> {
-                for (String item : groceryList) {
-                    System.out.println(item);
+                for (GroceryItem item : groceryList) {
+                    System.out.println(item.getName()+ ": " + item.getQuantity());
                 }
                 return 0;
             }
@@ -107,12 +118,25 @@ public class Main {
 
                 String itemName = positionalArgs.get(1);
                 var newGroceryList = groceryList.stream()
-                        .filter(item -> !item.contains(itemName))
+                        .filter(item -> !item.getName().equals(itemName))
                         .toList();
 
                 var outputFile = new File(fileName);
 
-                OBJECT_MAPPER.writeValue(outputFile, newGroceryList);
+                OBJECT_MAPPER.writeValue(outputFile, groceryList);
+                return 0;
+            }
+
+            case "total" -> {
+                if (positionalArgs.size() < 2) {
+                    System.err.println("Missing arguments");
+                    return 1;
+                }
+
+                String itemName = positionalArgs.get(1);
+                int total = calculateTotalForItem(groceryList, itemName);
+
+                System.out.println("Total quantity for " + itemName + ": " + total);
                 return 0;
             }
 
