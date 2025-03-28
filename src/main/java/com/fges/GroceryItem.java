@@ -8,7 +8,7 @@ public class GroceryItem {
     // Constructeur par défaut
     public GroceryItem() {
     }
-    
+
     public GroceryItem(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
@@ -28,5 +28,21 @@ public class GroceryItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    // Increase the quantity
+    public void addQuantity(int amount) {
+        this.quantity += amount;
+    }
+
+    // Decrease the quantity
+    public void decreaseQuantity(int amount) {
+        this.quantity = Math.max(0, this.quantity - amount);
+    }
+
+    // Display using toString
+    @Override
+    public String toString() {
+        return name + ": " + quantity;
     }
 }
