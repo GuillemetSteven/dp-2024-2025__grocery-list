@@ -18,10 +18,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.FileWriter;
+import java.io.Reader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import java.io.Reader;
 
 
 public class Main {
@@ -40,12 +42,57 @@ public class Main {
                 .sum();
     }
 
+    private static List<GroceryItem> readGroceryListFromCsv(Path filePath) throws IOException {
+        List<GroceryItem> groceryList = new ArrayList<>();
+
+        // Check if file exists and is not empty
+        if (!Files.exists(filePath) || Files.size(filePath) == 0) {
+            return groceryList;
+        }
+
+        try (Reader reader = Files.newBufferedReader(filePath);
+             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
+                     .builder()
+                     .setHeader("name", "quantity")
+                     .setSkipHeaderRecord(true)
+                     .build())) {
+
+            for (CSVRecord record : csvParser) {
+                String name = record.get("name");
+                int quantity = Integer.parseInt(record.get("quantity"));
+                groceryList.add(new GroceryItem(name, quantity));
+            }
+        } catch (NumberFormatException e) {
+            throw new IOException("Invalid format in CSV file: " + e.getMessage());
+        }
+        return groceryList;
+    }
+
+
+    private static void writeGroceryListToCsv(List<GroceryItem> groceryList, File outputFile) throws IOException {
+        // Create new file or overwrite existing
+        try (FileWriter writer = new FileWriter(outputFile);
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+                     .builder()
+                     .setHeader("name", "quantity")
+                     .build())) {
+
+            for (GroceryItem item : groceryList) {
+                csvPrinter.printRecord(item.getName(), item.getQuantity());
+            }
+            csvPrinter.flush();
+        }
+    }
+
+
     public static <groceryItem> int exec(String[] args) throws IOException {
         // Setup CLI interface
         Options cliOptions = new Options();
         CommandLineParser parser = new DefaultParser();
 
         cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
+
+        cliOptions.addOption("f", "format", true, "JSON or CSV format");
 
         CommandLine cmd;
         try {
@@ -56,6 +103,16 @@ public class Main {
         }
 
         String fileName = cmd.getOptionValue("s");
+
+        // Le format par défaut
+        String format = "json";
+        if (cmd.hasOption("format")) {
+            format = cmd.getOptionValue("format").toLowerCase();
+            if (!format.equals("json") && !format.equals("csv")) {
+                System.err.println("Invalid format. Available format : JSON | CSV");
+                return 1;
+            }
+        }
 
         List<String> positionalArgs = cmd.getArgList();
         if (positionalArgs.isEmpty()) {
@@ -69,24 +126,53 @@ public class Main {
 
         Path filePath = Paths.get(fileName);
 
-        String fileContent = "";
 
-        List<GroceryItem> groceryList;
 
+        List<GroceryItem> groceryList = new ArrayList<>();
         if (Files.exists(filePath)) {
-            fileContent = Files.readString(filePath);
-
-            // Reading JSON
-            var parsedList = OBJECT_MAPPER.readValue(fileContent, new TypeReference<List<GroceryItem>>() {
-            });
-            // Cast the list as an ArrayList to ensure its mutability
-            groceryList = new ArrayList<>(parsedList);
+            if (format.equals("csv")) {
+                try {
+                    // Vérification s'il existe, je l'initialise
+                    if (Files.size(filePath) == 0) {
+                        writeGroceryListToCsv(new ArrayList<>(), new File(fileName));
+                    } else {
+                        groceryList = readGroceryListFromCsv(filePath);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to read as CSV: " + e.getMessage());
+                }
+            } else {
+                // Format JSON
+                try {
+                    if (Files.size(filePath) == 0) {
+                        // Initialisation JSON
+                        Files.writeString(filePath, "[]");
+                        groceryList = new ArrayList<>();
+                    } else {
+                        String fileContent = Files.readString(filePath).trim();
+                        if (!fileContent.startsWith("[") || !fileContent.endsWith("]")) {
+                            // Si invalide, initialise
+                            Files.writeString(filePath, "[]");
+                            groceryList = new ArrayList<>();
+                        } else {
+                            groceryList = OBJECT_MAPPER.readValue(fileContent,
+                                    new TypeReference<List<GroceryItem>>() {});
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to read as JSON: " + e.getMessage());
+                }
+            }
         } else {
-            groceryList = new ArrayList<>();
+            // Créer au bon format
+            if (format.equals("csv")) {
+                writeGroceryListToCsv(new ArrayList<>(), new File(fileName));
+            } else {
+                Files.writeString(filePath, "[]");
+            }
         }
 
         // interpret command
-
         switch (command) {
             case "add" -> {
                 if (positionalArgs.size() < 3) {
@@ -100,8 +186,11 @@ public class Main {
                 groceryList.add(new GroceryItem(itemName, quantity));
 
                 var outputFile = new File(fileName);
-
-                OBJECT_MAPPER.writeValue(outputFile, groceryList);
+                if (format.equals("json")) {
+                    OBJECT_MAPPER.writeValue(outputFile, groceryList);
+                } else {
+                    writeGroceryListToCsv(groceryList, outputFile);
+                }
                 return 0;
             }
             case "list" -> {
@@ -122,8 +211,11 @@ public class Main {
                         .toList();
 
                 var outputFile = new File(fileName);
-
-                OBJECT_MAPPER.writeValue(outputFile, groceryList);
+                if (format.equals("json")) {
+                    OBJECT_MAPPER.writeValue(outputFile, newGroceryList);
+                } else {
+                    writeGroceryListToCsv(newGroceryList, outputFile);
+                }
                 return 0;
             }
 
