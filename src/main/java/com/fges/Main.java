@@ -53,14 +53,15 @@ public class Main {
         try (Reader reader = Files.newBufferedReader(filePath);
              CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
                      .builder()
-                     .setHeader("name", "quantity")
+                     .setHeader("name", "quantity", "category")
                      .setSkipHeaderRecord(true)
                      .build())) {
 
             for (CSVRecord record : csvParser) {
                 String name = record.get("name");
                 int quantity = Integer.parseInt(record.get("quantity"));
-                groceryList.add(new GroceryItem(name, quantity));
+                String category = record.get("category");
+                groceryList.add(new GroceryItem(name, quantity, category));
             }
         } catch (NumberFormatException e) {
             throw new IOException("Invalid format in CSV file: " + e.getMessage());
@@ -94,6 +95,7 @@ public class Main {
 
         cliOptions.addOption("f", "format", true, "JSON or CSV format");
 
+        cliOptions.addOption("c", "category", true, "category default = default");
         CommandLine cmd;
         try {
             cmd = parser.parse(cliOptions, args);
@@ -103,6 +105,8 @@ public class Main {
         }
 
         String fileName = cmd.getOptionValue("s");
+        String cate = cmd.getOptionValue("c");
+        System.out.println(cate);
 
         // Le format par défaut
         String format = "json";
@@ -121,6 +125,7 @@ public class Main {
         }
 
         String command = positionalArgs.get(0);
+        //System.out.println(command);
 
         // Load current grocery list state
 
@@ -174,6 +179,10 @@ public class Main {
 
         // interpret command
         switch (command) {
+            case "pop"-> {
+                System.out.println("in c");
+                return 0;
+            }
             case "add" -> {
                 if (positionalArgs.size() < 3) {
                     System.err.println("Missing arguments");
@@ -183,7 +192,9 @@ public class Main {
                 String itemName = positionalArgs.get(1);
                 int quantity = Integer.parseInt(positionalArgs.get(2));
 
-                groceryList.add(new GroceryItem(itemName, quantity));
+                String category = cmd.getOptionValue("c","default");
+
+                groceryList.add(new GroceryItem(itemName, quantity, category));
 
                 var outputFile = new File(fileName);
                 if (format.equals("json")) {
