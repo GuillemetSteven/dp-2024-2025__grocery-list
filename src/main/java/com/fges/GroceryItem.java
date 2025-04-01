@@ -4,14 +4,16 @@ public class GroceryItem {
 
     private String name;
     private int quantity;
+    private String category;
 
     // Constructeur par défaut
     public GroceryItem() {
     }
 
-    public GroceryItem(String name, int quantity) {
+    public GroceryItem(String name, int quantity , String category) {
         this.name = name;
         this.quantity = quantity;
+        this.category = category;
     }
 
     public String getName() {
@@ -24,6 +26,10 @@ public class GroceryItem {
 
     public int getQuantity(){
         return quantity;
+    }
+
+    public String getCategory(){
+        return category;
     }
 
     public void setQuantity(int quantity) {
@@ -43,6 +49,6 @@ public class GroceryItem {
     // Display using toString
     @Override
     public String toString() {
-        return name + ": " + quantity;
+        return name + ": " + quantity + ": " + category;
     }
 }
