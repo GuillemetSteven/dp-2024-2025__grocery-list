@@ -16,10 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import java.io.FileWriter;
 import java.io.Reader;
+import java.util.Objects;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -205,9 +208,20 @@ public class Main {
                 return 0;
             }
             case "list" -> {
+                HashMap<String, List<GroceryItem>> allItems = new HashMap<>();
                 for (GroceryItem item : groceryList) {
-                    System.out.println(item.getName()+ ": " + item.getQuantity());
+                    allItems.computeIfAbsent(item.getCategory(), k -> new ArrayList<>()).add(item);
                 }
+                for (String category : new ArrayList<>(allItems.keySet())) {
+                    System.out.println("###### " + category + " ######");
+                    List<GroceryItem> items = allItems.get(category);
+                    for (GroceryItem data : items) {
+                        System.out.println(data.getName() + ":" + data.getQuantity());
+                    }
+
+                    allItems.remove(category);
+                }
+
                 return 0;
             }
             case "remove" -> {
