@@ -3,7 +3,7 @@
 ## Exigences implémentées
 
 AJout des fonctionnalités suivantes :
-- Support de l'option `--category` (`-c`) pour spécifier la catégorie d'un article
+- Support de l'option `-c` pour spécifier la catégorie d'un article
 - Comportement par défaut affectant les articles sans catégorie spécifiée à "default"
 - Affichage des articles groupés par catégorie avec préfixes "#" et suffixes ":"
 
