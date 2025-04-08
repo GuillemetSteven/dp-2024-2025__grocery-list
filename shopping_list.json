@@ -1,13 +1,9 @@
 [ {
-  "name" : "Milk",
-  "quantity" : 2,
-  "category" : "Dairy"
-}, {
-  "name" : "Milk",
-  "quantity" : 2,
-  "category" : "default"
-}, {
   "name" : "crampté gui",
-  "quantity" : 29,
+  "quantity" : 2,
   "category" : "Dairy"
+}, {
+  "name" : "feur",
+  "quantity" : 6,
+  "category" : "default"
 } ]
