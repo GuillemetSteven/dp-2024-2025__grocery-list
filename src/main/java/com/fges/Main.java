@@ -182,16 +182,11 @@ public class Main {
 
         // interpret command
         switch (command) {
-            case "pop"-> {
-                System.out.println("in c");
-                return 0;
-            }
             case "add" -> {
                 if (positionalArgs.size() < 3) {
                     System.err.println("Missing arguments");
                     return 1;
-                }
-
+                }   
                 String itemName = positionalArgs.get(1);
                 int quantity = Integer.parseInt(positionalArgs.get(2));
 
