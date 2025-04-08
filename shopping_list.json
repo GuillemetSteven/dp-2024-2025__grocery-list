@@ -1,9 +1,19 @@
 [ {
   "name" : "crampté gui",
   "quantity" : 2,
-  "category" : "Dairy"
+  "category" : null
 }, {
+<<<<<<< Updated upstream
   "name" : "feur",
   "quantity" : 6,
   "category" : "default"
+=======
+  "name" : "Milk",
+  "quantity" : 2,
+  "category" : null
+}, {
+  "name" : "Milk",
+  "quantity" : 2,
+  "category" : "Massi"
+>>>>>>> Stashed changes
 } ]
