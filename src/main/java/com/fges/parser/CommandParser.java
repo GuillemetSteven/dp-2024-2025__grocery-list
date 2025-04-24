@@ -43,6 +43,8 @@ public class CommandParser {
             case "list" -> command = Command.LIST;
             case "remove" -> command = Command.REMOVE;
             case "total" -> command = Command.TOTAL;
+            case "info"   -> command = Command.INFO;
+
             default -> command = Command.UNKNOWN;
         }
 

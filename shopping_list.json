@@ -6,4 +6,12 @@
   "name" : "feur",
   "quantity" : 6,
   "category" : "default"
+}, {
+  "name" : "feur",
+  "quantity" : 6,
+  "category" : "majs"
+}, {
+  "name" : "feur",
+  "quantity" : 6,
+  "category" : "majs"
 } ]

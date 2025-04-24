@@ -5,5 +5,9 @@ public enum Command {
     LIST,
     REMOVE,
     TOTAL,
+    INFO,
     UNKNOWN
 }
+
+
+

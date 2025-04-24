@@ -5,6 +5,8 @@ import com.fges.commands.Command;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class GroceryOperation {
 
@@ -96,6 +98,17 @@ public class GroceryOperation {
                 System.out.println("Quantité totale pour '" + itemName + "' : " + total);
                 return 0;
             }
+            case INFO -> {
+               String today = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+               String osName = System.getProperty("os.name");
+               String javaVer = System.getProperty("java.version");
+
+               System.out.println("Today's date: " + today);
+               System.out.println("Operating System: " + osName);
+               System.out.println("Java version: " + javaVer);
+               return 0;
+           }
+
             default -> {
                 System.err.println("Commande inconnue.");
                 return 1;
