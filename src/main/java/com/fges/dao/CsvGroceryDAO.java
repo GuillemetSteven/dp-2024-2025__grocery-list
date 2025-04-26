@@ -14,9 +14,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+// Classe pour gérer les listes de courses en format CSV
 public class CsvGroceryDAO implements GroceryDAO {
 
     @Override
+    // Lit une liste de courses depuis un fichier CSV
     public List<GroceryItem> readGroceryList(Path filePath) throws IOException {
         List<GroceryItem> groceryList = new ArrayList<>();
         if (!Files.exists(filePath) || Files.size(filePath) == 0) {
@@ -43,6 +45,7 @@ public class CsvGroceryDAO implements GroceryDAO {
     }
 
     @Override
+    // Écrit une liste de courses dans un fichier CSV
     public void writeGroceryList(List<GroceryItem> groceryList, Path filePath) throws IOException {
         try (FileWriter writer = new FileWriter(filePath.toFile());
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT

@@ -11,12 +11,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+// Classe pour gérer les listes de courses en format JSON
 public class JsonGroceryDAO implements GroceryDAO {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT);
 
     @Override
+    // Lit une liste de courses depuis un fichier JSON
     public List<GroceryItem> readGroceryList(Path filePath) throws IOException {
         List<GroceryItem> groceryList = new ArrayList<>();
         if (!Files.exists(filePath) || Files.size(filePath) == 0) {
@@ -33,6 +35,7 @@ public class JsonGroceryDAO implements GroceryDAO {
     }
 
     @Override
+    // Écrit une liste de courses dans un fichier JSON
     public void writeGroceryList(List<GroceryItem> groceryList, Path filePath) throws IOException {
         String jsonString = OBJECT_MAPPER.writeValueAsString(groceryList);
         Files.writeString(filePath, jsonString);
