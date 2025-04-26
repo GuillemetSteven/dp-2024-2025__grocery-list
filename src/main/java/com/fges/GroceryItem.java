@@ -10,7 +10,7 @@ public class GroceryItem {
     public GroceryItem() {
     }
 
-    public GroceryItem(String name, int quantity , String category) {
+    public GroceryItem(String name, int quantity, String category) {
         this.name = name;
         this.quantity = quantity;
         this.category = category;
@@ -36,20 +36,18 @@ public class GroceryItem {
         this.quantity = quantity;
     }
 
-    // Increase the quantity
+    // Augmente la quantité
     public void addQuantity(int amount) {
         this.quantity += amount;
     }
 
-    // Decrease the quantity
+    // Diminue la quantité en s'assurant qu'elle reste >= 0
     public void decreaseQuantity(int amount) {
         this.quantity = Math.max(0, this.quantity - amount);
     }
 
-    // Display using toString
     @Override
     public String toString() {
         return name + ": " + quantity + ": " + category;
     }
 }
-
