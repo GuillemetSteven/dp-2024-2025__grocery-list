@@ -53,7 +53,7 @@ public class Main {
         } catch (IOException e) {
             System.err.println("Erreur lors de la lecture du fichier : " + e.getMessage());
             System.exit(1);
-            return; // pour satisfaire le compilateur
+            return;
         }
 
         // 4. Exécution de la commande (logique métier)

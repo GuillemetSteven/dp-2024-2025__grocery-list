@@ -7,6 +7,7 @@
   "name" : "feur",
   "quantity" : 6,
   "category" : "default"
+<<<<<<< HEAD
 =======
   "name" : "Milk",
   "quantity" : 2,
@@ -16,4 +17,14 @@
   "quantity" : 2,
   "category" : "Massi"
 >>>>>>> Stashed changes
+=======
+}, {
+  "name" : "feur",
+  "quantity" : 6,
+  "category" : "majs"
+}, {
+  "name" : "feur",
+  "quantity" : 6,
+  "category" : "majs"
+>>>>>>> massiDev
 } ]
