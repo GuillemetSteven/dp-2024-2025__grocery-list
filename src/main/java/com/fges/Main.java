@@ -1,9 +1,9 @@
 package com.fges;
 
-import com.fges.commands.Command;
+import com.fges.commands.CommandFactory;
+import com.fges.commands.CommandHandler;
 import com.fges.dao.GroceryDAO;
 import com.fges.factory.GroceryStorageFactory;
-import com.fges.operations.GroceryOperation;
 import com.fges.parser.CommandParser;
 import com.fges.parser.ParsingResult;
 
@@ -13,8 +13,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-// Méthode principale qui gère l'exécution du programme
 public class Main {
+
     public static void main(String[] args) {
         CommandParser commandParser = new CommandParser();
         ParsingResult parsingResult = commandParser.parse(args);
@@ -22,10 +22,9 @@ public class Main {
             System.exit(1);
         }
 
-        Command command = parsingResult.getCommand();
+        String commandName = parsingResult.getPositionalArgs().get(0);
         String fileName = parsingResult.getSourceFile();
         String format = parsingResult.getFormat();
-        String category = parsingResult.getCategory();
 
         List<GroceryItem> groceryList = new ArrayList<>();
         Path filePath = null;
@@ -43,7 +42,6 @@ public class Main {
                         Files.writeString(filePath, "[]");
                     }
                 }
-
                 groceryList = dao.readGroceryList(filePath);
             } catch (IOException e) {
                 System.err.println("Erreur fichier : " + e.getMessage());
@@ -51,12 +49,8 @@ public class Main {
             }
         }
 
-        int result = GroceryOperation.executeCommand(
-            command,
-            groceryList,
-            parsingResult.getPositionalArgs(),
-            category
-        );
+        CommandHandler handler = CommandFactory.getCommandHandler(commandName);
+        int result = handler.execute(groceryList, parsingResult);
 
         if (result == 0 && filePath != null) {
             try {
