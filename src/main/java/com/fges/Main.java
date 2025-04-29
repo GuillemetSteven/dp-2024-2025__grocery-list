@@ -13,28 +13,30 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+// Méthode principale qui gère l'exécution du programme
 public class Main {
-
-    // Méthode principale qui gère l'exécution du programme
     public static void main(String[] args) {
         CommandParser commandParser = new CommandParser();
         ParsingResult parsingResult = commandParser.parse(args);
-
         if (parsingResult == null) {
             System.exit(1);
         }
 
         Command command = parsingResult.getCommand();
 
-        // Si la commande est INFO, on exécute et on sort directement
         if (command == Command.INFO) {
-            command.execute(null, null, null);
+            GroceryOperation.executeCommand(command, new ArrayList<>(), parsingResult.getPositionalArgs(), "default");
             System.exit(0);
         }
 
         String fileName = parsingResult.getSourceFile();
         String format = parsingResult.getFormat();
         String category = parsingResult.getCategory();
+
+        if (fileName == null) {
+            System.err.println("L'option -s est requise pour cette commande.");
+            System.exit(1);
+        }
 
         GroceryDAO dao = GroceryStorageFactory.getGroceryDAO(format);
         Path filePath = Path.of(fileName);
@@ -80,4 +82,3 @@ public class Main {
         System.exit(result);
     }
 }
-
