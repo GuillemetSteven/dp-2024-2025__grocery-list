@@ -23,58 +23,46 @@ public class Main {
         }
 
         Command command = parsingResult.getCommand();
-
-        if (command == Command.INFO) {
-            GroceryOperation.executeCommand(command, new ArrayList<>(), parsingResult.getPositionalArgs(), "default");
-            System.exit(0);
-        }
-
         String fileName = parsingResult.getSourceFile();
         String format = parsingResult.getFormat();
         String category = parsingResult.getCategory();
 
-        if (fileName == null) {
-            System.err.println("L'option -s est requise pour cette commande.");
-            System.exit(1);
-        }
+        List<GroceryItem> groceryList = new ArrayList<>();
+        Path filePath = null;
+        GroceryDAO dao = null;
 
-        GroceryDAO dao = GroceryStorageFactory.getGroceryDAO(format);
-        Path filePath = Path.of(fileName);
+        if (fileName != null) {
+            dao = GroceryStorageFactory.getGroceryDAO(format);
+            filePath = Path.of(fileName);
 
-        try {
-            if (!Files.exists(filePath)) {
-                if ("csv".equalsIgnoreCase(format)) {
-                    dao.writeGroceryList(new ArrayList<>(), filePath);
-                } else {
-                    Files.writeString(filePath, "[]");
+            try {
+                if (!Files.exists(filePath)) {
+                    if ("csv".equalsIgnoreCase(format)) {
+                        dao.writeGroceryList(new ArrayList<>(), filePath);
+                    } else {
+                        Files.writeString(filePath, "[]");
+                    }
                 }
-            }
-        } catch (IOException e) {
-            System.err.println("Erreur lors de l'initialisation du fichier : " + e.getMessage());
-            System.exit(1);
-        }
 
-        List<GroceryItem> groceryList;
-        try {
-            groceryList = dao.readGroceryList(filePath);
-        } catch (IOException e) {
-            System.err.println("Erreur lors de la lecture du fichier : " + e.getMessage());
-            System.exit(1);
-            return;
+                groceryList = dao.readGroceryList(filePath);
+            } catch (IOException e) {
+                System.err.println("Erreur fichier : " + e.getMessage());
+                System.exit(1);
+            }
         }
 
         int result = GroceryOperation.executeCommand(
-                command,
-                groceryList,
-                parsingResult.getPositionalArgs(),
-                category
+            command,
+            groceryList,
+            parsingResult.getPositionalArgs(),
+            category
         );
 
-        if (command != Command.UNKNOWN && result == 0) {
+        if (result == 0 && filePath != null) {
             try {
                 dao.writeGroceryList(groceryList, filePath);
             } catch (IOException e) {
-                System.err.println("Erreur lors de l'écriture dans le fichier : " + e.getMessage());
+                System.err.println("Erreur lors de l'écriture : " + e.getMessage());
                 System.exit(1);
             }
         }
