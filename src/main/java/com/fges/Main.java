@@ -15,24 +15,30 @@ import java.util.List;
 
 public class Main {
 
+    // Méthode principale qui gère l'exécution du programme
     public static void main(String[] args) {
-        // 1. Parsing des arguments
         CommandParser commandParser = new CommandParser();
         ParsingResult parsingResult = commandParser.parse(args);
+
         if (parsingResult == null) {
             System.exit(1);
         }
 
         Command command = parsingResult.getCommand();
+
+        // Si la commande est INFO, on exécute et on sort directement
+        if (command == Command.INFO) {
+            command.execute(null, null, null);
+            System.exit(0);
+        }
+
         String fileName = parsingResult.getSourceFile();
         String format = parsingResult.getFormat();
         String category = parsingResult.getCategory();
 
-        // 2. Sélection de l'implémentation du DAO (pattern Strategy via Factory)
         GroceryDAO dao = GroceryStorageFactory.getGroceryDAO(format);
         Path filePath = Path.of(fileName);
 
-        // Initialisation du fichier s'il n'existe pas
         try {
             if (!Files.exists(filePath)) {
                 if ("csv".equalsIgnoreCase(format)) {
@@ -46,7 +52,6 @@ public class Main {
             System.exit(1);
         }
 
-        // 3. Lecture de la liste
         List<GroceryItem> groceryList;
         try {
             groceryList = dao.readGroceryList(filePath);
@@ -56,7 +61,6 @@ public class Main {
             return;
         }
 
-        // 4. Exécution de la commande (logique métier)
         int result = GroceryOperation.executeCommand(
                 command,
                 groceryList,
@@ -64,7 +68,6 @@ public class Main {
                 category
         );
 
-        // 5. Sauvegarde si la commande a modifié la liste (ici, on écrit même pour list/total par simplicité)
         if (command != Command.UNKNOWN && result == 0) {
             try {
                 dao.writeGroceryList(groceryList, filePath);
@@ -77,3 +80,4 @@ public class Main {
         System.exit(result);
     }
 }
+
