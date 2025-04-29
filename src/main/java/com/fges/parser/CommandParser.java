@@ -43,23 +43,32 @@ public class CommandParser {
         String cmdString = positionalArgs.get(0).toLowerCase();
         Command command;
         switch (cmdString) {
-            case "add" -> command = Command.ADD;
-            case "list" -> command = Command.LIST;
+            case "add"    -> command = Command.ADD;
+            case "list"   -> command = Command.LIST;
             case "remove" -> command = Command.REMOVE;
-            case "total" -> command = Command.TOTAL;
+            case "total"  -> command = Command.TOTAL;
             case "info"   -> command = Command.INFO;
-
-            default -> command = Command.UNKNOWN;
+            default       -> command = Command.UNKNOWN;
         }
 
+        // **Cas SPECIAL info : on ignore TOUTES les options**
+        if (command == Command.INFO) {
+            ParsingResult infoResult = new ParsingResult();
+            infoResult.setCommand(Command.INFO);
+            infoResult.setPositionalArgs(List.of("info"));
+            infoResult.setSourceFile(null);
+            infoResult.setFormat("json");
+            infoResult.setCategory("default");
+            infoResult.setCategorySpecified(false);
+            return infoResult;
+        }
+
+        // Sinon, parsing “normal” pour add/list/remove/…
         ParsingResult result = new ParsingResult();
         result.setCommand(command);
         result.setPositionalArgs(positionalArgs);
         result.setSourceFile(cmd.getOptionValue("s"));
         result.setFormat(cmd.getOptionValue("f", "json"));
-
-        // Si l'utilisateur spécifie explicitement -c, on récupère sa valeur,
-        // sinon on laisse la valeur par défaut "default" pour la commande add.
         if (cmd.hasOption("c")) {
             result.setCategory(cmd.getOptionValue("c"));
             result.setCategorySpecified(true);
@@ -67,11 +76,6 @@ public class CommandParser {
             result.setCategory("default");
             result.setCategorySpecified(false);
         }
-
         return result;
     }
-
-    public Options getCliOptions() {
-        return cliOptions;
     }
-}
