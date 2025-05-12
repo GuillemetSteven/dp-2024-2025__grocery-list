@@ -13,6 +13,7 @@ public enum Command {
     LIST,
     TOTAL,
     INFO,
+    WEB,
     UNKNOWN;
 
 }

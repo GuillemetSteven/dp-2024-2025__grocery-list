@@ -28,7 +28,7 @@ public class CommandParser {
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd;
         try {
-            cmd = parser.parse(cliOptions, args);
+            cmd = parser.parse(cliOptions, args, false);
         } catch (ParseException ex) {
             System.err.println("Erreur lors de l'analyse des arguments : " + ex.getMessage());
             return null;
@@ -48,6 +48,7 @@ public class CommandParser {
             case "remove" -> command = Command.REMOVE;
             case "total"  -> command = Command.TOTAL;
             case "info"   -> command = Command.INFO;
+            case "web"    -> command = Command.WEB;
             default       -> command = Command.UNKNOWN;
         }
 
@@ -62,6 +63,7 @@ public class CommandParser {
             infoResult.setCategorySpecified(false);
             return infoResult;
         }
+
 
         // Sinon, parsing “normal” pour add/list/remove/…
         ParsingResult result = new ParsingResult();

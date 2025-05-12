@@ -13,6 +13,8 @@ public class CommandFactory {
         commandHandlers.put("remove", new RemoveCommand());
         commandHandlers.put("total", new TotalCommand());
         commandHandlers.put("info", new InfoCommand());
+        commandHandlers.put("web", new WebCommand());
+
     }
 
     public static CommandHandler getCommandHandler(String commandName) {

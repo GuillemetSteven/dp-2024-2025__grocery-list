@@ -12,6 +12,7 @@ public class ParsingResult {
     private String category;
     private boolean categorySpecified; // true si -c a été passé explicitement
 
+
     public Command getCommand() {
         return command;
     }
@@ -59,4 +60,5 @@ public class ParsingResult {
     public void setCategorySpecified(boolean categorySpecified) {
         this.categorySpecified = categorySpecified;
     }
+
 }
