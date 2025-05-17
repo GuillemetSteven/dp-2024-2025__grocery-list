@@ -5,6 +5,7 @@ import com.fges.parser.ParsingResult;
 
 import java.util.List;
 
+// Comportement ar défaut pour les commandes non reconnues
 public class UnknownCommand implements CommandHandler {
 
     @Override

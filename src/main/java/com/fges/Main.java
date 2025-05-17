@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+// Coordonne le chargement, l'exécution des commandes et la sauvegarde des données
 public class Main {
 
     public static void main(String[] args) {
