@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// Analyse les arguments de la ligne de commande et les convertit en objet ParsingResult
 public class CommandParser {
 
     private final Options cliOptions;

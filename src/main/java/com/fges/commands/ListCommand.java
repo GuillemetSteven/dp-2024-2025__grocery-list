@@ -6,6 +6,7 @@ import com.fges.parser.ParsingResult;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// Commande 'list' qui affiche les articles par catégorie
 public class ListCommand implements CommandHandler {
 
     @Override

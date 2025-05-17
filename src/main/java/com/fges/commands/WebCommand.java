@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Commande 'web' qui lance une interface web pour la liste de courses
 public class WebCommand implements CommandHandler {
     @Override
     public int execute(List<GroceryItem> groceryList, ParsingResult parsingResult) {

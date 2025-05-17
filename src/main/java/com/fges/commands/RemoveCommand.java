@@ -6,6 +6,7 @@ import com.fges.parser.ParsingResult;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Commande 'remove' qui supprime un article de la liste
 public class RemoveCommand implements CommandHandler {
 
     @Override

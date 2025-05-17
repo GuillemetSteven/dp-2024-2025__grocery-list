@@ -3,6 +3,7 @@ package com.fges.parser;
 import com.fges.commands.Command;
 import java.util.List;
 
+// Stocke le résultat du parsing des arguments de ligne de commande
 public class ParsingResult {
 
     private Command command;

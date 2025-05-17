@@ -1,5 +1,6 @@
 package com.fges;
 
+// Représente un article dans la liste de courses avec son nom, sa quantité et sa catégorie
 public class GroceryItem {
 
     private String name;

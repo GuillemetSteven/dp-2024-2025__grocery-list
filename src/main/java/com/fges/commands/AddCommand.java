@@ -4,6 +4,7 @@ import com.fges.GroceryItem;
 import com.fges.parser.ParsingResult;
 import java.util.List;
 
+// Commande 'add' permet d'ajouter un article à la liste de courses
 public class AddCommand implements CommandHandler {
 
     @Override

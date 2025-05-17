@@ -5,6 +5,7 @@ import com.fges.parser.ParsingResult;
 
 import java.util.List;
 
+// Commande 'total' qui calcule la quantité totale d'un article
 public class TotalCommand implements CommandHandler {
 
     private int calculateTotalForItem(List<GroceryItem> groceryList, String itemName) {
