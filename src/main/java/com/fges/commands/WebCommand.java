@@ -36,18 +36,39 @@ public class WebCommand implements CommandHandler {
         }
 
         String fileName = parsingResult.getSourceFile();
-        String format   = parsingResult.getFormat();
-        GroceryDAO dao  = GroceryStorageFactory.getGroceryDAO(format);
-        Path filePath   = Paths.get(fileName);
+        // Si le fichier source n'est pas spécifié, utiliser un nom par défaut
+        if (fileName == null || fileName.isEmpty()) {
+            fileName = "groceries.json"; // Nom par défaut
+        }
+
+        // Obtenir le format spécifié
+        String format = parsingResult.getFormat();
+        System.out.println("Format utilisé: " + format);
+
+        // Changer l'extension du fichier si nécessaire pour correspondre au format
+        if (fileName.contains(".")) {
+            String baseName = fileName.substring(0, fileName.lastIndexOf('.'));
+            fileName = baseName + "." + format;
+        } else {
+            fileName = fileName + "." + format;
+        }
+
+        System.out.println("Utilisation du fichier: " + fileName);
+
+        GroceryDAO dao = GroceryStorageFactory.getGroceryDAO(format);
+        Path filePath = Paths.get(fileName);
 
         try {
             if (!Files.exists(filePath)) {
+                // Création du fichier selon le format spécifié
                 if ("csv".equalsIgnoreCase(format)) {
                     dao.writeGroceryList(List.of(), filePath);
                 } else {
                     Files.writeString(filePath, "[]");
                 }
             }
+
+            // Vider la liste actuelle et charger les données depuis le fichier
             groceryList.clear();
             groceryList.addAll(dao.readGroceryList(filePath));
         } catch (IOException e) {
@@ -61,8 +82,8 @@ public class WebCommand implements CommandHandler {
             @Override
             public List<WebGroceryItem> getGroceries() {
                 return groceryList.stream()
-                    .map(i -> new WebGroceryItem(i.getName(), i.getQuantity(), i.getCategory()))
-                    .collect(Collectors.toList());
+                        .map(i -> new WebGroceryItem(i.getName(), i.getQuantity(), i.getCategory()))
+                        .collect(Collectors.toList());
             }
 
             @Override
@@ -91,7 +112,7 @@ public class WebCommand implements CommandHandler {
             }
         };
 
-        //Démarrage du serveur
+        // Démarrage du serveur
         GroceryShopServer server = new GroceryShopServer(shop);
         server.start(port);
         System.out.println("Serveur web démarré sur http://localhost:" + port);

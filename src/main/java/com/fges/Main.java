@@ -26,6 +26,13 @@ public class Main {
         String fileName = parsingResult.getSourceFile();
         String format = parsingResult.getFormat();
 
+        // Affichage des informations pour le débogage
+        System.out.println("Commande: " + commandName);
+        if (fileName != null) {
+            System.out.println("Fichier source: " + fileName);
+        }
+        System.out.println("Format: " + format);
+
         List<GroceryItem> groceryList = new ArrayList<>();
         Path filePath = null;
         GroceryDAO dao = null;
