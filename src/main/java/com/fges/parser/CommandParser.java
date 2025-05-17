@@ -3,15 +3,14 @@ package com.fges.parser;
 import com.fges.commands.Command;
 import org.apache.commons.cli.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-// Classe pour parser les arguments de la ligne de commande
 
 public class CommandParser {
 
     private final Options cliOptions;
 
- // Initialise les options de commandes
     public CommandParser() {
         cliOptions = new Options();
 
@@ -23,18 +22,41 @@ public class CommandParser {
         cliOptions.addOption("c", "category", true, "Catégorie de l'article (par défaut, pour l'add: default)");
     }
 
-// Parse les arguments fournis en ligne de commande
     public ParsingResult parse(String[] args) {
+        // Traitement manuel pour séparer les commandes positionnelles des options
+        List<String> positionalArgs = new ArrayList<>();
+        List<String> optionArgs = new ArrayList<>();
+
+        // Parcourir tous les arguments
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+
+            // Si c'est une option
+            if (arg.startsWith("-")) {
+                optionArgs.add(arg);
+                // Si l'option a une valeur, ajouter également cette valeur
+                if (i + 1 < args.length && !args[i + 1].startsWith("-")) {
+                    optionArgs.add(args[i + 1]);
+                    i++; // Sauter l'argument suivant puisqu'il a déjà été traité
+                }
+            } else {
+                // Sinon, c'est un argument positionnel
+                positionalArgs.add(arg);
+            }
+        }
+
+        // Recréer un tableau d'arguments pour Apache Commons CLI
+        String[] optionArgsArray = optionArgs.toArray(new String[0]);
+
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd;
         try {
-            cmd = parser.parse(cliOptions, args, false);
+            cmd = parser.parse(cliOptions, optionArgsArray);
         } catch (ParseException ex) {
             System.err.println("Erreur lors de l'analyse des arguments : " + ex.getMessage());
             return null;
         }
 
-        List<String> positionalArgs = cmd.getArgList();
         if (positionalArgs.isEmpty()) {
             System.err.println("Commande manquante");
             return null;
@@ -64,13 +86,22 @@ public class CommandParser {
             return infoResult;
         }
 
-
-        // Sinon, parsing “normal” pour add/list/remove/…
+        // Sinon, parsing "normal" pour add/list/remove/web...
         ParsingResult result = new ParsingResult();
         result.setCommand(command);
         result.setPositionalArgs(positionalArgs);
+
+        // Traitement des options
         result.setSourceFile(cmd.getOptionValue("s"));
-        result.setFormat(cmd.getOptionValue("f", "json"));
+
+        // Traitement explicite du format
+        String specifiedFormat = cmd.getOptionValue("f");
+        if (specifiedFormat != null) {
+            result.setFormat(specifiedFormat.toLowerCase());
+        } else {
+            result.setFormat("json"); // Valeur par défaut
+        }
+
         if (cmd.hasOption("c")) {
             result.setCategory(cmd.getOptionValue("c"));
             result.setCategorySpecified(true);
@@ -80,4 +111,4 @@ public class CommandParser {
         }
         return result;
     }
-    }
+}
