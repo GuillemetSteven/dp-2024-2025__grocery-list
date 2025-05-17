@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+// Coordonne le chargement, l'exécution des commandes et la sauvegarde des données
 public class Main {
 
     public static void main(String[] args) {
@@ -25,6 +26,13 @@ public class Main {
         String commandName = parsingResult.getPositionalArgs().get(0);
         String fileName = parsingResult.getSourceFile();
         String format = parsingResult.getFormat();
+
+        // Affichage des informations pour le débogage
+        System.out.println("Commande: " + commandName);
+        if (fileName != null) {
+            System.out.println("Fichier source: " + fileName);
+        }
+        System.out.println("Format: " + format);
 
         List<GroceryItem> groceryList = new ArrayList<>();
         Path filePath = null;

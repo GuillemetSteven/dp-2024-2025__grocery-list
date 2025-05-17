@@ -3,6 +3,7 @@ package com.fges.parser;
 import com.fges.commands.Command;
 import java.util.List;
 
+// Stocke le résultat du parsing des arguments de ligne de commande
 public class ParsingResult {
 
     private Command command;
@@ -11,6 +12,7 @@ public class ParsingResult {
     private String format;
     private String category;
     private boolean categorySpecified; // true si -c a été passé explicitement
+
 
     public Command getCommand() {
         return command;
@@ -59,4 +61,5 @@ public class ParsingResult {
     public void setCategorySpecified(boolean categorySpecified) {
         this.categorySpecified = categorySpecified;
     }
+
 }
